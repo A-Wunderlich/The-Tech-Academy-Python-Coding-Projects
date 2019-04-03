@@ -44,7 +44,7 @@ class ParentWindow(Frame):
         self.btnBrowse1.grid(row=0, column=0, padx=(10, 0), pady=(30, 0), sticky=W)
         self.btnBrowse2 = Button(self.master, text="Destination Dir", width=12, height=1, command=self.getDesDir)
         self.btnBrowse2.grid(row=1, column=0, padx=(10, 0), pady=(10, 0), sticky=W)
-        self.btnCheck = Button(self.master, text="Move .txt Files", width=12, height=2, command=move())
+        self.btnCheck = Button(self.master, text="Move .txt Files", width=12, height=2, command=self.move)
         self.btnCheck.grid(row=2, column=0, padx=(10, 0), pady=(10, 0), sticky=W)
         self.btnClose = Button(self.master, text="Close Program", width=12, height=2)
         self.btnClose.grid(row=2, column=2, sticky=E)
@@ -66,6 +66,8 @@ class ParentWindow(Frame):
         self.txtBox2.insert(END, dDir)
         move(dDir)
 
+    def move(file,dDir):
+        shutil.move(file,dDir)
 
     
     
