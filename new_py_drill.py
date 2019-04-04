@@ -44,6 +44,7 @@ class ParentWindow(Frame):
     
 
     def getSourceDir(self):
+        #this gets the first file path for the source directory and prints it in the first text box when the first 'browse' button is pressed
         sDir = filedialog.askdirectory()
         self.txtBox1.insert(END, sDir)
         scrDir = str(sDir)
@@ -51,6 +52,7 @@ class ParentWindow(Frame):
         return scrDir
 
     def getDesDir(self):
+        #this gets the second file path for the destination directory and prints it in the second text box when the second 'browse' button is pressed
         dDir = filedialog.askdirectory()
         self.txtBox2.insert(END, dDir)
         dstDir = str(dDir)
@@ -58,6 +60,7 @@ class ParentWindow(Frame):
         return dstDir
 
     def move(self):
+        #this function is supposed to pull the two files paths, which it does, then open the source, get the text files and move them with shutil.move(), instead it errors out
         sDir = self.txtBox1.get()
         src = os.listdir(sDir)
         dst = self.txtBox2.get()
