@@ -46,20 +46,18 @@ class ParentWindow(Frame):
     def getSourceDir(self):
         sDir = filedialog.askdirectory()
         self.txtBox1.insert(END, sDir)
-        scrDir = str(sDir)
-        print(scrDir)
-        return scrDir
+        print(sDir)
+
 
     def getDesDir(self):
         dDir = filedialog.askdirectory()
         self.txtBox2.insert(END, dDir)
-        dstDir = str(dDir)
-        print(dstDir)
-        return dstDir
+        print(dDir)
+
 
     def move(self):
-        src = self.getSourceDir(scrDir)
-        dst = self.getDesDir(dstDir)
+        src = self.txtBox1.get()
+        dst = self.txtBox2.get()
         for files in src:
             if files.endswith(".txt"):
                 shutil.move(files, dst)
