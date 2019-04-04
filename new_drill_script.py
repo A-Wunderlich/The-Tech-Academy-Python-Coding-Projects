@@ -56,12 +56,23 @@ class ParentWindow(Frame):
 
 
     def move(self):
-        src = self.txtBox1.get()
+        sDir = self.txtBox1.get()
+        src =  os.listdir(sDir)
         dst = self.txtBox2.get()
         for files in src:
             if files.endswith(".txt"):
-                shutil.move(files, dst)
+                print(files)
 
+        
+        
+
+    def fileDateSave():
+        Dir = str(self.txtBox1.get())
+        for file in os.listdir(Dir): 
+            if file.endswith('.txt'): 
+                txtList = os.path.join(Dir, file) 
+                txtTime = os.path.getctime(Dir) 
+                print("\n{} | {}".format(txtList,txtTime)) 
     
     
 
