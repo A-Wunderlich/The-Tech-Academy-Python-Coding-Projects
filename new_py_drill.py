@@ -5,13 +5,13 @@ from tkinter import filedialog
 import os
 import shutil
 
-conn = sqlite3.connect('pydrill.db')
+conn = sqlite3.connect('pydrill.db') #creates a table to store the file names and mtimes
 
 with conn:
     cur = conn.cursor()
     cur.execute("CREATE TABLE IF NOT EXISTS txt_files( \
         ID INTEGER PRIMARY KEY AUTOINCREMENT, \
-        fname TEXT \
+        fname TEXT, \
         mdate TEXT \
         )")
     conn.commit()
@@ -32,8 +32,8 @@ class ParentWindow(Frame):
         self.btnBrowse2 = Button(self.master, text="Destination Dir", width=12, height=1, command=self.getDesDir)
         self.btnBrowse2.grid(row=1, column=0, padx=(10, 0), pady=(10, 0), sticky=W)
         self.btnCheck = Button(self.master, text="Move .txt Files", width=12, height=2, command=self.move)
-        self.btnCheck.grid(row=2, column=0, padx=(10, 0), pady=(10, 0), sticky=W)
-        self.btnClose = Button(self.master, text="Close Program", width=12, height=2)
+        self.btnCheck.grid(row=2, column=0, padx=(10, 0), pady=(10, 0), sticky=E)
+        self.btnClose = Button(self.master, text="Close Program", width=12, height=2, command=self.close)
         self.btnClose.grid(row=2, column=2, sticky=E)
         self.txtBox1 = Entry(self.master, text="", font=12, width=40)
         self.txtBox1.grid(row=0, column=1, columnspan=2, padx=(25, 0), pady=(30, 0))
@@ -44,29 +44,41 @@ class ParentWindow(Frame):
     
 
     def getSourceDir(self):
-        #this gets the first file path for the source directory and prints it in the first text box when the first 'browse' button is pressed
+        #this gets the first file path for the source directory and inserts it in the first text box when the first button is pressed
+        self.txtBox1.delete(0,END)
         sDir = filedialog.askdirectory()
         self.txtBox1.insert(END, sDir)
-        scrDir = str(sDir)
-        print(scrDir)
-        return scrDir
+        print(sDir)
 
     def getDesDir(self):
-        #this gets the second file path for the destination directory and prints it in the second text box when the second 'browse' button is pressed
+        #this gets the second file path for the destination directory and inserts it in the second text box when the second button is pressed
+        self.txtBox2.delete(0,END)
         dDir = filedialog.askdirectory()
         self.txtBox2.insert(END, dDir)
-        dstDir = str(dDir)
-        print(dstDir)
-        return dstDir
-
+        print(dDir)
+        
     def move(self):
-        #this function is supposed to pull the two files paths, which it does, then open the source, get the text files and move them with shutil.move(), instead it errors out
-        sDir = self.txtBox1.get()
-        src = os.listdir(sDir)
-        dst = self.txtBox2.get()
-        for files in src:
-            if files.endswith(".txt"):
-                shutil.move(files,dst)
+        sDir = self.txtBox1.get() #gets source directory
+        srcFiles = os.listdir(sDir) #gets list of all files in source directory
+        dst = self.txtBox2.get() #gets destination directory
+        for files in srcFiles:
+            if files.endswith(".txt"): #gets .txt files
+                txtListPath = os.path.join(sDir, files) #joins path and file for absolute path so they can be used in shutil.move()
+                txtListTime = os.path.getmtime(txtListPath) #gets mtime of .txt files in source dir that are going to be moved
+                print("\n{} | {}".format(txtListPath,txtListTime)) #prints "absolute path| mtime"
+                shutil.move(txtListPath,dst) #moves .txt files from source directory to destination directory
+                conn = sqlite3.connect('pydrill.db') #adds the name of the .txt files and their respective mtime to the pydrill table
+                with conn:
+                    cur = conn.cursor()
+                    cur.execute  ("INSERT INTO txt_files (fname, mdate) VALUES (?,?) ",(files, txtListTime,))
+                    conn.commit()
+                conn.close()
+                
+    def close(self):
+        #closes script
+        self.master.destroy()
+        os._exit(0)
+                    
 
     
     
